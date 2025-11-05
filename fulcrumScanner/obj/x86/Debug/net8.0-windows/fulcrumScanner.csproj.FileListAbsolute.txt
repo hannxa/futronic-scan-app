@@ -1,0 +1,17 @@
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\fulcrumScanner.exe
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\ftrScanAPI.dll
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\fulcrumScanner.deps.json
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\fulcrumScanner.runtimeconfig.json
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\fulcrumScanner.dll
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\bin\x86\Debug\net8.0-windows\fulcrumScanner.pdb
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.Form1.resources
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.csproj.GenerateResource.cache
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.AssemblyInfoInputs.cache
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.AssemblyInfo.cs
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.csproj.CoreCompileInputs.cache
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.dll
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\refint\fulcrumScanner.dll
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.pdb
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\fulcrumScanner.genruntimeconfig.cache
+C:\Users\akabe\source\repos\fulcrumScanner\fulcrumScanner\obj\x86\Debug\net8.0-windows\ref\fulcrumScanner.dll

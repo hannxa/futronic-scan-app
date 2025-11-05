@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace fingerprintScanner
+{
+    internal class Futonic
+    {
+        struct _FTRSCAN_FAKE_REPLICA_PARAMETERS
+        {
+            bool bCalculated;
+            int nCalculatedSum1;
+            int nCalculatedSumFuzzy;
+            int nCalculatedSumEmpty;
+            int nCalculatedSum2;
+            double dblCalculatedTremor;
+            double dblCalculatedValue;
+        }
+
+        struct _FTRSCAN_FRAME_PARAMETERS
+        {
+            int nContrastOnDose2;
+            int nContrastOnDose4;
+            int nDose;
+            int nBrightnessOnDose1;
+            int nBrightnessOnDose2;
+            int nBrightnessOnDose3;
+            int nBrightnessOnDose4;
+            _FTRSCAN_FAKE_REPLICA_PARAMETERS FakeReplicaParams;
+            _FTRSCAN_FAKE_REPLICA_PARAMETERS Reserved;
+
+            public bool isOK { get { return nDose != -1; } }
+        }
+
+        struct _FTRSCAN_IMAGE_SIZE
+        {
+            public int nWidth;
+            public int nHeight;
+            public int nImageSize;
+        }
+
+        [DllImport("ftrScanAPI.dll")]
+        static extern bool ftrScanIsFingerPresent(IntPtr ftrHandle, out _FTRSCAN_FRAME_PARAMETERS pFrameParameters);
+        [DllImport("ftrScanAPI.dll")]
+        static extern IntPtr ftrScanOpenDevice();
+        [DllImport("ftrScanAPI.dll")]
+        static extern void ftrScanCloseDevice(IntPtr ftrHandle);
+        [DllImport("ftrScanAPI.dll")]
+        static extern bool ftrScanGetImageSize(IntPtr ftrHandle, out _FTRSCAN_IMAGE_SIZE pImageSize);
+        [DllImport("ftrScanAPI.dll")]
+        static extern bool ftrScanGetImage(IntPtr ftrHandle, int nDose, byte[] pBuffer);
+
+        static IntPtr device;
+        bool x2;
+
+        public bool Connected
+        {
+            get { return (device != IntPtr.Zero); }
+        }
+        public void Dispose()
+        {
+            if (Connected)
+            {
+                ftrScanCloseDevice(device);
+            }
+        }
+
+        public Bitmap ExportBitMap()
+        {
+            if (!Connected)
+                return null;
+
+            var t = new _FTRSCAN_IMAGE_SIZE();
+            ftrScanGetImageSize(device, out t);
+            byte[] arr = new byte[t.nImageSize];
+            ftrScanGetImage(device, 4, arr);
+
+            var bmp = new Bitmap(t.nWidth, t.nHeight);
+            for (int x = 0; x < t.nWidth; x++)
+            {
+                for (int y = 0; y < t.nHeight; y++)
+                {
+                    int a = 255 - arr[y * t.nWidth + x];
+                    bmp.SetPixel(x, y, Color.FromArgb(a, a, a));
+                }
+            }
+            return bmp;
+        }
+        public bool IsFinger()
+        {
+            var t = new _FTRSCAN_FRAME_PARAMETERS();
+            bool dedo = ftrScanIsFingerPresent(device, out t);
+            if (!t.isOK)
+            {
+                Dispose();
+                return false;
+            }
+            else
+                return dedo;
+        }
+
+        public bool Init()
+        {
+            if (!Connected)
+                device = ftrScanOpenDevice();
+            return Connected;
+        }
+    }
+}
