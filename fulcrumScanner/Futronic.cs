@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,6 +57,7 @@ namespace fingerprintScanner
 
         static IntPtr device;
         bool x2;
+        Bitmap bmp;
 
         public bool Connected
         {
@@ -69,6 +71,18 @@ namespace fingerprintScanner
             }
         }
 
+        public byte[] getBMP()
+        {
+            if (this.bmp == null)
+                return null;
+
+            using (var ms = new MemoryStream())
+            {
+                this.bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                return ms.ToArray();
+            }
+        }
+
         public Bitmap ExportBitMap()
         {
             if (!Connected)
@@ -79,16 +93,16 @@ namespace fingerprintScanner
             byte[] arr = new byte[t.nImageSize];
             ftrScanGetImage(device, 4, arr);
 
-            var bmp = new Bitmap(t.nWidth, t.nHeight);
+            this.bmp = new Bitmap(t.nWidth, t.nHeight);
             for (int x = 0; x < t.nWidth; x++)
             {
                 for (int y = 0; y < t.nHeight; y++)
                 {
                     int a = 255 - arr[y * t.nWidth + x];
-                    bmp.SetPixel(x, y, Color.FromArgb(a, a, a));
+                    this.bmp.SetPixel(x, y, Color.FromArgb(a, a, a));
                 }
             }
-            return bmp;
+            return this.bmp;
         }
         public bool IsFinger()
         {

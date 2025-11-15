@@ -5,6 +5,7 @@ namespace fulcrumScanner
     public partial class Form1 : Form
     {
         Futonic futronic = new Futonic();
+        Client client;
         bool x2 = false;
 
         public Form1()
@@ -12,9 +13,8 @@ namespace fulcrumScanner
             InitializeComponent();
             predict_label.Visible = false;
             check_sex.Visible = false;
-
+            client = new Client(futronic);
         }
-
 
 
         private void scan_button_Click(object sender, EventArgs e)
@@ -34,9 +34,15 @@ namespace fulcrumScanner
 
         }
 
-        private void check_sex_Click(object sender, EventArgs e)
+        private async void check_sex_Click(object sender, EventArgs e)
         {
+            string result = await client.SendToPython();
+            if (string.IsNullOrEmpty(result)){
+                predict_label.Text = "Nie mo¿na by³o odebraæ predykcji";
+                return;
+            }
             predict_label.Visible = true;
+            predict_label.Text = result;
         }
     }
 }
