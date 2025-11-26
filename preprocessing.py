@@ -43,56 +43,83 @@ def preprocess_pipeline(image):
 def create_fingerprint_mask(image, threshold=0.05):
     img_float = image.astype(np.float32)
     mean = cv2.blur(img_float, (15, 15))
-    sq_mean = cv2.blur(img_float ** 2, (15, 15))
-    variance = sq_mean - mean ** 2
+    sq_mean = cv2.blur(img_float**2, (15, 15))
+    variance = sq_mean - mean**2
+
+    # variance normalization
     variance = cv2.normalize(variance, None, 0, 1, cv2.NORM_MINMAX)
+
     mask = (variance > threshold).astype(np.uint8)
+
+    # Morfology
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     return mask
 
-
 def remove_intersections(skeleton_img):
+    # Image copy
     skel = skeleton_img.copy()
     skel[skel > 0] = 1
-    kernel = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]], dtype=np.uint8)
+
+    # Filtr looking for neighbors
+    kernel = np.array([[1, 1, 1],
+                       [1, 0, 1],
+                       [1, 1, 1]], dtype=np.uint8)
+
     neighbors_count = cv2.filter2D(skel, -1, kernel)
+
+    # Find intersections
     intersections = (skel == 1) & (neighbors_count > 2)
+
+    # And delete them
     skel_clean = skeleton_img.copy()
     skel_clean[intersections] = 0
+
     return skel_clean
 
 
 def extract_features(image, mask):
     """Output: ridges_count, ridge_density, rtvtr"""
+
+    # uint8 conversion
     img_u8 = np.uint8(image * 255)
+   # Adaptive binarization
     binary = cv2.adaptiveThreshold(img_u8, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
                                    cv2.THRESH_BINARY_INV, 25, 5)
 
+    # Binary masks
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
     binary = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
 
+    # Ridges mask
     binary_ridges = cv2.bitwise_and(binary, binary, mask=mask)
+
+    # Valleys mask
     binary_valleys_raw = cv2.bitwise_not(binary)
     binary_valleys = cv2.bitwise_and(binary_valleys_raw, binary_valleys_raw, mask=mask)
 
+    # Ridges to Valleys Thickness Ratio Counting
     ridge_pixels = np.count_nonzero(binary_ridges)
     valley_pixels = np.count_nonzero(binary_valleys)
 
-    rtvtr = 0.0
-    if valley_pixels > 0:
+    if valley_pixels == 0:
+        rtvtr = 0.0
+    else:
         rtvtr = ridge_pixels / float(valley_pixels)
 
+    # Ridges skeletonization
     skel = skeletonize(binary_ridges > 0)
     skel_uint8 = (skel * 255).astype(np.uint8)
+
+    # Removing intersections
     skel_cut = remove_intersections(skel_uint8)
 
+    # Counting ridges
     min_line_length = 20
     nb_r, labels_r, stats_r, _ = cv2.connectedComponentsWithStats(skel_cut, connectivity=8)
     ridges_count = sum(1 for i in range(1, nb_r) if stats_r[i, cv2.CC_STAT_AREA] >= min_line_length)
-
     ridge_density = ridge_pixels / (np.count_nonzero(mask) + 1e-6)
 
     return ridges_count, ridge_density, rtvtr
@@ -120,5 +147,6 @@ def prepare_image_for_model(image_path):
 
     # Features
     final_features = np.array([[ridges, density, rtvtr]])
+
 
     return final_img, final_features
