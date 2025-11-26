@@ -6,7 +6,7 @@ from inference import GenderPredictor
 
 app = FastAPI(title="Gender Recognition API")
 
-MODEL_PATH = 'gender_model.h5'
+MODEL_PATH = 'gender_model.tflite'
 TEMP_DIR = 'temp_uploads'
 os.makedirs(TEMP_DIR, exist_ok=True)
 
@@ -48,4 +48,5 @@ async def predict_gender(file: UploadFile = File(...)):
         if 'temp_file_path' in locals() and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
         raise HTTPException(status_code=500, detail=str(e))
+
 
