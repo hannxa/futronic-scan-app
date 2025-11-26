@@ -31,6 +31,7 @@ namespace fulcrumScanner
             }
             scan_button.Text = "Powtórz pomiar";
             check_sex.Visible = true;
+            predict_label.Visible = false;
 
         }
 
@@ -43,11 +44,12 @@ namespace fulcrumScanner
                 return;
             }
             predict_label.Visible = true;
+            result = result.Trim('"');
             if (result == "Female")
             {
                 result = "Kobieta";
             }
-            else if (result == "Male" || result == "Mê¿czyzny")
+            else if (result == "Male")
             {
                 result = "Mê¿czyzna";
             }
