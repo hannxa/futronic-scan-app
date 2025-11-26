@@ -36,13 +36,23 @@ namespace fulcrumScanner
 
         private async void check_sex_Click(object sender, EventArgs e)
         {
+            check_sex.Visible = false;
             string result = await client.SendToPython();
             if (string.IsNullOrEmpty(result)){
                 predict_label.Text = "Nie mo¿na by³o odebraæ predykcji";
                 return;
             }
             predict_label.Visible = true;
-            predict_label.Text = result;
+            if (result == "Female")
+            {
+                result = "Kobieta";
+            }
+            else if (result == "Male" || result == "Mê¿czyzny")
+            {
+                result = "Mê¿czyzna";
+            }
+
+            predict_label.Text = $"Predykcja: {result}";
         }
     }
 }

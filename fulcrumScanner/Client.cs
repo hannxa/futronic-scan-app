@@ -33,6 +33,12 @@ namespace fulcrumScanner
 
                 var response = await client.PostAsync("http://127.0.0.1:8000/predict", content);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"Błąd połączenia: {response.StatusCode}");
+                    return null;
+                }
+
                 var result = response.Content.ReadAsStringAsync();
                 string text = await result;
 
